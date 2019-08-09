@@ -26,7 +26,11 @@
 var bigOne = document.getElementById('myinput');
 var DB = firebase.database();
 var dbRef = DB.ref('text');
-dbRef.on('value', snap => {
+//dbRef.on('value', snap => {
+//	var readval = snap.val();
+//	bigOne.value = readval.textbody;
+//});
+dbRef.on('value', function(snap) {
 	var readval = snap.val();
 	bigOne.value = readval.textbody;
 });
