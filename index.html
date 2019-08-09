@@ -1,1 +1,41 @@
-hello
+<body>
+
+<p>Memo with firebase</p>
+<INPUT id="myinput" name="myinput" value="enter here" onchange="textedited(this.value)">
+
+
+<script src="https://www.gstatic.com/firebasejs/6.3.4/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/3.1.0/firebase-database.js"></script>
+
+<script>
+  // Your web app's Firebase configuration
+  var firebaseConfig = {
+    apiKey: "AIzaSyAaZjYtIS6Ix0VzaL0ete02zUqvKA7R92s",
+    authDomain: "drbaksoo-v1.firebaseapp.com",
+    databaseURL: "https://drbaksoo-v1.firebaseio.com",
+    projectId: "drbaksoo-v1",
+    storageBucket: "",
+    messagingSenderId: "1009427144739",
+    appId: "1:1009427144739:web:5b9aa2887f77553f"
+  };
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+
+// getting the text value from the database
+var bigOne = document.getElementById('myinput');
+var DB = firebase.database();
+var dbRef = DB.ref('text');
+dbRef.on('value', snap => {
+	var readval = snap.val();
+	bigOne.value = readval.textbody;
+});
+
+function textedited(txt) {
+	firebase.database().ref('text').set(
+		{textbody:txt}
+	);
+}
+</script>
+
+
+</body>
