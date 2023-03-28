@@ -9,8 +9,9 @@ var RoughNotation=function(t){"use strict";const e="http://www.w3.org/2000/svg";
         const projectAnnotationType = { type: 'underline', color: '#2196F3', padding: 3, strokeWidth: 3 };
         
         const a1 = annotate($('#underlinethis'), projectAnnotationType);
+        const a2 = annotate($('#underlinethis2'), projectAnnotationType);
 
-        const ag = annotationGroup([a1]);
+        const ag = annotationGroup([a1,a2]);
         ag.show();
     }
 
