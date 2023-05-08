@@ -24,7 +24,7 @@ async function streamVideo() {
         audio: false,
         // Set the video size
         video: {
-            width: 800, height: 400
+            width: 400, height: 200
         }
     };
     
@@ -60,9 +60,10 @@ function edgeDetection() {
         
         // Get the current frame from the intermediate canvas
         var src = cv.imread("streamCanvas");
+	let edges = new cv.Mat();
         cv.cvtColor(src, src, cv.COLOR_RGB2GRAY, 0);
-        cv.Canny(src, src, 50, 100, 3, false);
-        cv.imshow("edgeDetectionCanvas", src);
+        cv.Canny(src, edges, 50, 100, 3, false);
+        cv.imshow("edgeDetectionCanvas", edges);
         src.delete();
     }, 42);
 }
