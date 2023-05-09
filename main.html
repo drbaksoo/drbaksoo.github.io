@@ -8,9 +8,8 @@
     </head>
     <body>
         <canvas width=device-width height=800 id = "streamCanvas"></canvas>
-	    <BR>
         <canvas width=device-width height=800 id = "edgeDetectionCanvas"></canvas>
-        <video id="video" playsinline autoplay></video>
+        <video width=device-width id="video" playsinline autoplay></video>
         
         <script type="text/javascript" src="https://docs.opencv.org/3.4/opencv.js"></script>
     </body>
@@ -26,7 +25,6 @@ async function streamVideo() {
         audio: false,
         // Set the video size
         video: {
-		width: device-width, height: device-height
         }
 /*
         video: {
@@ -52,7 +50,8 @@ function drawCanvas() {
     // Get context and draw frame from video element
     var canvas = document.getElementById("streamCanvas")
     var ctx = canvas.getContext('2d');
-    ctx.drawImage(video, 0, 0); 
+    var offset = (devicewidth-video.videoWidth)/2;
+    ctx.drawImage(video, offset, 0); 
 }
 
 function edgeDetection() {
@@ -77,11 +76,11 @@ function edgeDetection() {
         cv.imshow("edgeDetectionCanvas", src);
 
         let startPoint = new cv.Point(10,10);
-        let endPoint = new cv.Point(300,300);
+        let endPoint = new cv.Point(290,290);
 	cv.line(orgsrc,startPoint, endPoint, [255,255,0,255],5);
 	cv.imshow("streamCanvas",orgsrc);
 
-	console.log(lines.rows);
+	//console.log(lines.rows);
         src.delete();
 	orgsrc.delete();
 	edges.delete();
@@ -91,14 +90,18 @@ function edgeDetection() {
 
 // main function to clean up
 function main() {
+    devicewidth = (window.innerWidth > 0) ? window.innerWidth : screen.width;
+    deviceheight = (window.innerHeight > 0) ? window.innerHeight : screen.height;
     // Hide the video tag
     video.style.display = "none";
     // Run edge detection
     edgeDetection();
 }
+
 // Load main
 main();
-
+var devicewidth;
+var deviceheight;
 
 </script>
 
