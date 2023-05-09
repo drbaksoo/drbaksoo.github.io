@@ -77,11 +77,8 @@ function edgeDetection() {
         cv.Canny(src, src, 50, 100, 3, false);
         cv.HoughLinesP(src, lines, 1, Math.PI / 180, 0,0,0);
         //cv.imshow("edgeDetectionCanvas", src);
-
-        let startPoint = new cv.Point(10,10);
-        let endPoint = new cv.Point(290,290);
-	cv.line(orgsrc,startPoint, endPoint, [255,255,0,255],2);
-	cv.imshow("streamCanvas",orgsrc);
+	    
+	//cv.imshow("streamCanvas",orgsrc);
 
 	//console.log(lines.rows);
 	var XX = new cv.Point(0,0);
@@ -103,11 +100,9 @@ function edgeDetection() {
 		YY.y = y2;
 		cv.line(orgsrc,XX, YY, [255,0,0,255],1);
 	}
-	XX.x = devicewidth*0.4;
-	YY.x = devicewidth*0.4;
-	XX.y = video.videoHeight/2;
-	YY.y = video.videoHeight;
-	cv.line(orgsrc,XX,YY, [0,0,255,255],2);
+	XX.x = devicewidth*0.4; YY.x = devicewidth*0.4; XX.y = video.videoHeight/2; YY.y = video.videoHeight;
+	XX.x = devicewidth*0.6; YY.x = devicewidth*0.6; XX.y = video.videoHeight/2; YY.y = video.videoHeight;    
+	cv.line(orgsrc,XX,YY, [0,0,255,255],1);
 	cv.imshow("streamCanvas",orgsrc);
 
 
