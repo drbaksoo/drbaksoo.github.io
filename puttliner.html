@@ -92,7 +92,7 @@ function edgeDetection() {
 			continue;
 		if (y1 < video.videoHeight/2 || y2 < video.videoHeight/2)
 			continue;
-		if (Math.min(x1,x2) < devicewidth * 0.4 || Math.max(x1,x2) > devicewidth*0.6)
+		if ( Math.max(x1,x2) < devicewidth*0.7)
 			continue;
 		XX.x = x1;
 		XX.y = y1;
@@ -100,9 +100,8 @@ function edgeDetection() {
 		YY.y = y2;
 		cv.line(orgsrc,XX, YY, [255,0,0,255],1);
 	}
-	XX.x = devicewidth*0.4; YY.x = devicewidth*0.4; XX.y = video.videoHeight/2; YY.y = video.videoHeight;
-	cv.line(orgsrc,XX,YY, [0,0,255,255],1);    
-	XX.x = devicewidth*0.6; YY.x = devicewidth*0.6; XX.y = video.videoHeight/2; YY.y = video.videoHeight;    
+	  
+	XX.x = devicewidth*0.71; YY.x = devicewidth*0.71; XX.y = video.videoHeight/2; YY.y = video.videoHeight;    
 	cv.line(orgsrc,XX,YY, [0,0,255,255],1);
 	cv.imshow("streamCanvas",orgsrc);
 
