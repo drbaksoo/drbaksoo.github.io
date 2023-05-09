@@ -28,7 +28,8 @@ async function streamVideo() {
         }
 /*
         video: {
-            width: 400, height: 400
+            width: 400, height: 400,
+	facingMode: { exact: "environment" }
         }
 */
     };
@@ -50,7 +51,8 @@ function drawCanvas() {
     // Get context and draw frame from video element
     var canvas = document.getElementById("streamCanvas")
     var ctx = canvas.getContext('2d');
-    var offset = (devicewidth-video.videoWidth)/2;
+    var offset=0;
+    //offset = (devicewidth-video.videoWidth)/2;
     ctx.drawImage(video, offset, 0); 
 }
 
@@ -73,14 +75,30 @@ function edgeDetection() {
         cv.cvtColor(orgsrc, src, cv.COLOR_RGB2GRAY, 0);
         cv.Canny(src, src, 50, 100, 3, false);
         cv.HoughLinesP(src, lines, 1, Math.PI / 180, 0,0,0);
-        cv.imshow("edgeDetectionCanvas", src);
+        //cv.imshow("edgeDetectionCanvas", src);
 
         let startPoint = new cv.Point(10,10);
         let endPoint = new cv.Point(290,290);
-	cv.line(orgsrc,startPoint, endPoint, [255,255,0,255],5);
+	cv.line(orgsrc,startPoint, endPoint, [255,255,0,255],2);
 	cv.imshow("streamCanvas",orgsrc);
 
 	//console.log(lines.rows);
+	var XX = new cv.Point(0,0);
+	var YY = new cv.Point(0,0);
+	for (let i=0;i<lines.rows;++i) {
+		let x1 = lines.data32S[4*i];
+		let y1 = lines.data32S[4*i+1];
+		let x2 = lines.data32S[4*i+2];
+		let y2 = lines.data32S[4*i+3];
+		XX.x = x1;
+		XX.y = y1;
+		YY.x = x2;
+		YY.y = y2;
+		cv.line(orgsrc,XX, YY, [255,0,0,255],1);
+	}
+	cv.imshow("streamCanvas",orgsrc);
+
+
         src.delete();
 	orgsrc.delete();
 	edges.delete();
