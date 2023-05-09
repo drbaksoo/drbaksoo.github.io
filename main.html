@@ -7,8 +7,8 @@
         </Title>
     </head>
     <body>
-        <canvas width=device-width height=800 id = "streamCanvas"></canvas>
-        <canvas width=device-width height=800 id = "edgeDetectionCanvas"></canvas>
+        <canvas width=device-width height=device-height id = "streamCanvas"></canvas>
+        <canvas width=device-width height=device-height id = "edgeDetectionCanvas"></canvas>
         <video width=device-width id="video" playsinline autoplay></video>
         
         <script type="text/javascript" src="https://docs.opencv.org/3.4/opencv.js"></script>
@@ -25,12 +25,11 @@ async function streamVideo() {
         audio: false,
         // Set the video size
         video: {
-		facingMode: { exact: "environment" }
+	facingMode: { exact: "environment" }
         }
 /*
         video: {
             width: 400, height: 400,
-	facingMode: { exact: "environment" }
         }
 */
     };
@@ -91,6 +90,8 @@ function edgeDetection() {
 		let y1 = lines.data32S[4*i+1];
 		let x2 = lines.data32S[4*i+2];
 		let y2 = lines.data32S[4*i+3];
+		if ((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2) < 9)
+			continue;
 		XX.x = x1;
 		XX.y = y1;
 		YY.x = x2;
