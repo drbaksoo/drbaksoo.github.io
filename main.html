@@ -95,6 +95,8 @@ function edgeDetection() {
 			continue;
 		if (y1 < video.videoHeight/2 || y2 < video.videoHeight/2)
 			continue;
+		if (Math.min(x1,x2) < video.videoWidth * 0.4 || Math.max(x1,x2) > video.videoWidth*0.6)
+			continue;
 		XX.x = x1;
 		XX.y = y1;
 		YY.x = x2;
