@@ -1,0 +1,2 @@
+#firebase에 deploy하기
+firebase deploy --only hosting
