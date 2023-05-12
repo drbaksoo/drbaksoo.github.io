@@ -88,20 +88,35 @@ function edgeDetection() {
 		let y1 = lines.data32S[4*i+1];
 		let x2 = lines.data32S[4*i+2];
 		let y2 = lines.data32S[4*i+3];
-		if ((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2) < 9)
+		if ((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2) < 100)
 			continue;
 		if (y1 < video.videoHeight/2 || y2 < video.videoHeight/2)
 			continue;
-		if ( Math.max(x1,x2) < devicewidth*0.7)
+		if ( Math.max(x1,x2) < devicewidth*0.5)
 			continue;
-		XX.x = x1;
-		XX.y = y1;
-		YY.x = x2;
-		YY.y = y2;
+		if ( Math.abs(x1-x2) > Math.abs(y1-y2)*5)
+			continue;
+/* for testing, skip exact vertical line
+		if ( x1==x2 )
+			continue;
+*/
+
+		XX.x = x1; XX.y = y1; YY.x = x2; YY.y = y2;
 		cv.line(orgsrc,XX, YY, [255,0,0,255],1);
+
+		// draw extened line from XX,YY
+		var temp;
+		if (y2 > y1) { // swap point, 
+			temp = x2; x2=x1;x1=temp; temp=y2;y2=y1;y1=temp
+		}
+		let d = Math.sqrt((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2));
+		let xcut = x1+(x2-x1)/d*y1*1.5;
+		let ycut = y1+(y2-y1)/d*y1*1.5;
+		XX.x = x2; XX.y = y2; YY.x = xcut; YY.y = ycut;
+		cv.line(orgsrc,XX, YY, [0,255,0,255],1);
 	}
 	  
-	XX.x = devicewidth*0.71; YY.x = devicewidth*0.71; XX.y = video.videoHeight/2; YY.y = video.videoHeight;    
+	XX.x = devicewidth*0.51; YY.x = devicewidth*0.51; XX.y = video.videoHeight/2; YY.y = video.videoHeight;    
 	cv.line(orgsrc,XX,YY, [0,0,255,255],1);
 	cv.imshow("streamCanvas",orgsrc);
 
