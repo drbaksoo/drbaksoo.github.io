@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+    <head>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <Title>
+            Real Time Edge Detection with OpenCV.js
+        </Title>
+    </head>
+
+    <body>
+        <canvas width=device-width height=500 id = "streamCanvas"></canvas>
+        <canvas width=device-width height=800 id = "edgeDetectionCanvas"></canvas>
+        <video width=device-width id="video" playsinline autoplay></video>
+        
+        <script type="text/javascript" src="https://docs.opencv.org/3.4/opencv.js"></script>
+    </body>
+
+<script>
+// Set a variable for the video tag
+const video = document.getElementById("video");
+// Function to stream video from the web cam
+async function streamVideo() {
+    // Set video parameters
+    const constraints = {
+        // no audio is required
+        audio: false,
+        // Set the video size
+        video: {
+	facingMode: { ideal: "environment" }
+        }
+/*
+        video: {
+            width: 400, height: 400,
+        }
+*/
+    };
+    
+    try {
+        // Get the video stream
+        
+        const stream = await navigator.mediaDevices.getUserMedia(constraints);
+        window.stream = stream;
+        video.srcObject = stream; 
+         
+    } catch (e) {
+        alert("An error occurred while accessing the web cam.");
+    }   
+}
+
+// Function to draw a video frame onto the canvas
+function drawCanvas() {
+    // Get context and draw frame from video element
+    var canvas = document.getElementById("streamCanvas")
+    var ctx = canvas.getContext('2d');
+    var offset=0;
+    //offset = (devicewidth-video.videoWidth)/2;
+    ctx.drawImage(video, offset, 0); 
+}
+
+function edgeDetection() {
+    
+    // Start video stream
+    streamVideo();
+    
+    // Set interval to repeat function every 42 milliseconds
+    setInterval(() => {
+        // Draw frame to the intermediate canvas
+        drawCanvas();
+        
+        // Get the current frame from the intermediate canvas
+        var orgsrc = cv.imread("streamCanvas");
+        let src = new cv.Mat();
+        let edges = new cv.Mat();
+        let lines = new cv.Mat();
+
+        cv.cvtColor(orgsrc, src, cv.COLOR_RGB2GRAY, 0);
+        cv.Canny(src, src, 50, 100, 3, false);
+        cv.HoughLinesP(src, lines, 1, Math.PI / 180, 0,0,0);
+        //cv.imshow("edgeDetectionCanvas", src);
+	    
+	//cv.imshow("streamCanvas",orgsrc);
+
+	//console.log(lines.rows);
+	var XX = new cv.Point(0,0);
+	var YY = new cv.Point(0,0);
+	for (let i=0;i<lines.rows;++i) {
+		let x1 = lines.data32S[4*i];
+		let y1 = lines.data32S[4*i+1];
+		let x2 = lines.data32S[4*i+2];
+		let y2 = lines.data32S[4*i+3];
+		if ((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2) < 9)
+			continue;
+		if (y1 < video.videoHeight/2 || y2 < video.videoHeight/2)
+			continue;
+		if ( Math.max(x1,x2) < devicewidth*0.7)
+			continue;
+		XX.x = x1;
+		XX.y = y1;
+		YY.x = x2;
+		YY.y = y2;
+		cv.line(orgsrc,XX, YY, [255,0,0,255],1);
+	}
+	  
+	XX.x = devicewidth*0.71; YY.x = devicewidth*0.71; XX.y = video.videoHeight/2; YY.y = video.videoHeight;    
+	cv.line(orgsrc,XX,YY, [0,0,255,255],1);
+	cv.imshow("streamCanvas",orgsrc);
+
+
+        src.delete();
+	orgsrc.delete();
+	edges.delete();
+	lines.delete();
+    }, 42);
+}
+
+// main function to clean up
+function main() {
+    devicewidth = (window.innerWidth > 0) ? window.innerWidth : screen.width;
+    deviceheight = (window.innerHeight > 0) ? window.innerHeight : screen.height;
+    // Hide the video tag
+    video.style.display = "none";
+    // Run edge detection
+    edgeDetection();
+}
+
+// Load main
+main();
+var devicewidth;
+var deviceheight;
+
+// for test
+var canvas = document.getElementById('streamCanvas');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+</script>
+
+</html>
