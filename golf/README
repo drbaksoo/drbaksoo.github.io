@@ -1,2 +1,2 @@
-#firebase에 deploy하기
+#firebase에 deploy하기(source는 github에, hosting은 firebase에)
 firebase deploy --only hosting
