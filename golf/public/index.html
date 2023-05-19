@@ -74,7 +74,7 @@ function edgeDetection() {
         let lines = new cv.Mat();
 
         cv.cvtColor(orgsrc, src, cv.COLOR_RGB2GRAY, 0);
-        cv.Canny(src, src, 50, 100, 3, false);
+        cv.Canny(src, src, 50, 100, 3, true); 
         cv.HoughLinesP(src, lines, 1, Math.PI / 180, 0,0,0);
         //cv.imshow("edgeDetectionCanvas", src);
 	    
