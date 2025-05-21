@@ -75,7 +75,8 @@ function edgeDetection() {
 
         cv.cvtColor(orgsrc, src, cv.COLOR_RGB2GRAY, 0);
         cv.Canny(src, src, 50, 100, 3, true); 
-        cv.HoughLinesP(src, lines, 1, Math.PI / 180, 0,0,0);
+        //cv.HoughLinesP(src, lines, 1, Math.PI / 180, 0,0,0);
+	cv.HoughLinesP(src, lines, 1, Math.PI / 180, 50,100,20); // by copilot 
         //cv.imshow("edgeDetectionCanvas", src);
 	    
 	//cv.imshow("streamCanvas",orgsrc);
