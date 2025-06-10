@@ -21,6 +21,21 @@ const updateLSData = () => {
 
 }
 
+// Haversine 공식을 이용하여 거리 계산 (단위: 미터)
+function getDistanceFromLatLon(lat1, lon1, lat2, lon2) {
+  const R = 6371000; // 지구 반지름 (미터 단위)
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+
+  const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+            Math.sin(dLon / 2) * Math.sin(dLon / 2);
+
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c; // 거리 (미터)
+}
+
+
 const addNewNote =  (noteData = { text: '', xx: '0', yy: '0' }) => {
     const { text, xx, yy } = noteData;
 
@@ -65,7 +80,8 @@ const addNewNote =  (noteData = { text: '', xx: '0', yy: '0' }) => {
     // Toggle
     textArea.value = text; // Set the text content
     mainDiv.innerHTML = text;
-    distDiv.innerHTML = "dist :" + ((xx - gxx)**2 + (yy - gyy)**2) ;
+    var distance = getDistanceFromLatLon(xx,gxx,yy,gyy);
+    distDiv.innerHTML = distance + " meter" ;
 
     editButton.addEventListener('click', () => {
         mainDiv.classList.toggle('hidden');
