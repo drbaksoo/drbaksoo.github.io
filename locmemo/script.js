@@ -81,7 +81,7 @@ const addNewNote =  (noteData = { text: '', xx: '0', yy: '0' }) => {
     textArea.value = text; // Set the text content
     mainDiv.innerHTML = text;
     var distance = getDistanceFromLatLon(xx,yy,gxx,gyy);
-    distDiv.innerHTML = distance + " meters" ;
+    distDiv.innerHTML = distance.toFixed(1) + " meters" ;
 
     editButton.addEventListener('click', () => {
         mainDiv.classList.toggle('hidden');
