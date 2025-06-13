@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Keep Clone</title>
+    <!-- 구글 폰트 및 아이콘 라이브러리 로드 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+
+    <style>
+        /* --- 1. 기본 스타일 리셋 및 전역 설정 --- */
+        :root {
+            --primary-bg-color: #ffffff;
+            --secondary-bg-color: #f1f3f4;
+            --border-color: #e0e0e0;
+            --text-primary: #202124;
+            --text-secondary: #5f6368;
+            --header-height: 64px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: var(--primary-bg-color);
+            color: var(--text-primary);
+            /* 헤더가 상단에 고정되어도 콘텐츠가 잘리지 않도록 */
+            padding-top: var(--header-height);
+        }
+
+        /* --- 2. 헤더 스타일 --- */
+        .main-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 20px;
+            height: var(--header-height);
+            border-bottom: 1px solid var(--border-color);
+            position: fixed; /* 헤더 상단 고정 */
+            top: 0;
+            left: 0;
+            right: 0;
+            background-color: var(--primary-bg-color);
+            z-index: 1000;
+        }
+
+        .header-left, .header-right, .search-bar-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 16px; /* 요소 사이의 간격 */
+        }
+
+        .header-logo {
+            height: 40px;
+            width: 40px;
+        }
+
+        .header-title {
+            font-size: 22px;
+            color: var(--text-secondary);
+        }
+
+        .search-bar-wrapper {
+            flex-grow: 1; /* 중앙 영역이 가능한 많은 공간을 차지하도록 */
+            justify-content: center;
+            min-width: 0;
+        }
+
+        .search-bar {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            width: 100%;
+            max-width: 720px;
+            background-color: var(--secondary-bg-color);
+            padding: 12px 16px;
+            border-radius: 8px;
+        }
+
+        .search-bar input {
+            width: 100%;
+            border: none;
+            background: none;
+            outline: none;
+            font-size: 16px;
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+
+        .icon-button {
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            background: transparent;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0; /* 아이콘 버튼이 찌그러지지 않도록 */
+        }
+
+        .icon-button:hover {
+            background-color: var(--secondary-bg-color);
+        }
+        
+        /* --- 3. 메인 컨테이너 --- */
+        .container {
+            display: flex;
+        }
+
+        /* --- 4. 메인 콘텐츠 영역 --- */
+        .main-content {
+            flex-grow: 1;
+            padding: 32px;
+            min-width: 0; /* flex item이 줄어들 때 내용이 깨지는 것 방지 */
+        }
+        
+        /* --- 5. 메모 그리드 (레이아웃의 핵심) --- */
+        .notes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 16px; /* 카드 사이의 간격 */
+        }
+
+        /* 메모 카드 스타일 */
+        .note-card {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 16px;
+            break-inside: avoid; /* 컬럼이 나뉠 때 카드가 잘리는 현상 방지 */
+            transition: box-shadow 0.2s ease-in-out;
+            background-color: var(--primary-bg-color);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .note-card:hover {
+            box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3), 0 2px 6px 2px rgba(60,64,67,0.15);
+        }
+
+        .note-content {
+            font-size: 1rem;
+            line-height: 1.5;
+            white-space: pre-wrap; /* 줄바꿈과 공백을 HTML에 작성된 그대로 표시 */
+            word-wrap: break-word; /* 긴 단어가 영역을 벗어나지 않도록 */
+            
+            /* --- 수정된 스타일: 메모 높이 제한 --- */
+            max-height: 100px; /* 메모 내용의 최대 높이를 제한합니다. */
+            overflow-y: auto; /* 내용이 넘칠 경우 스크롤을 표시합니다. */
+        }
+
+        /* 스크롤바 스타일 (선택사항, 더 깔끔하게 보이기 위해) */
+        .note-content::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .note-content::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .note-content::-webkit-scrollbar-thumb {
+            background-color: rgba(0,0,0,0.2);
+            border-radius: 3px;
+        }
+
+        .note-toolbar {
+            margin-top: 16px;
+            opacity: 0; /* 평소에는 숨김 */
+            transition: opacity 0.2s ease-in-out;
+            display: flex;
+            justify-content: flex-end; /* 아이콘을 오른쪽으로 정렬 */
+            gap: 8px;
+        }
+        
+        .note-card:hover .note-toolbar {
+            opacity: 1; /* 카드에 마우스를 올리면 표시 */
+        }
+
+        .note-toolbar .icon-button {
+            font-size: 18px;
+        }
+
+        /* --- 6. 모바일 반응형 스타일 --- */
+        @media (max-width: 768px) {
+            .header-title {
+                display: none; /* 화면이 작을 때 'Keep' 텍스트 숨기기 */
+            }
+
+            .header-left, .header-right {
+                gap: 4px; /* 아이콘 사이 간격 줄이기 */
+            }
+            .main-header {
+                padding: 8px 12px;
+            }
+
+            .main-content {
+                padding: 16px; /* 콘텐츠 영역 여백 줄이기 */
+            }
+
+            .notes-grid {
+                gap: 12px; /* 모바일에서 카드 간격 줄이기 */
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 헤더: 로고, 검색창, 설정 등 -->
+    <header class="main-header">
+        <div class="header-left">
+            <button class="icon-button"><span class="material-icons-outlined">menu</span></button>
+            <img src="https://www.gstatic.com/images/branding/product/1x/keep_2020q4_48dp.png" alt="Keep 로고" class="header-logo">
+            <span class="header-title">Keep</span>
+        </div>
+        <div class="search-bar-wrapper">
+             <div class="search-bar">
+                <button class="icon-button"><span class="material-icons-outlined">search</span></button>
+                <input type="text" placeholder="검색">
+            </div>
+        </div>
+        <div class="header-right">
+            <button class="icon-button"><span class="material-icons-outlined">refresh</span></button>
+            <button class="icon-button"><span class="material-icons-outlined">view_agenda</span></button>
+            <button class="icon-button"><span class="material-icons-outlined">settings</span></button>
+        </div>
+    </header>
+
+    <!-- 메인 컨테이너 -->
+    <div class="container">
+        <!-- 메인 콘텐츠: 메모 목록 -->
+        <main class="main-content">
+            <!-- 메모 그리드 -->
+            <section class="notes-grid">
+                <!-- 아래는 예시 메모 카드입니다. JavaScript로 동적으로 추가/삭제하게 됩니다. -->
+                <article class="note-card">
+                    <p class="note-content">1. 프로젝트 A 진행 상황 보고서
+2. 다음 분기 마케팅 전략 아이디어
+3. 경쟁사 분석 자료 검토
+4. 주간 회의록 정리 및 배포
+5. 클라이언트 피드백 반영 사항 체크</p>
+                    <div class="note-toolbar">
+                        <button class="icon-button"><span class="material-icons-outlined">edit</span></button>
+                        <button class="icon-button"><span class="material-icons-outlined">delete</span></button>
+                    </div>
+                </article>
+
+                <article class="note-card">
+                    <p class="note-content">계란, 우유, 식빵, 아보카도, 닭가슴살, 양파, 토마토 소스</p>
+                    <div class="note-toolbar">
+                        <button class="icon-button"><span class="material-icons-outlined">edit</span></button>
+                        <button class="icon-button"><span class="material-icons-outlined">delete</span></button>
+                    </div>
+                </article>
+                
+                <article class="note-card">
+                    <p class="note-content">grid-template-columns 속성 마스터하기.
+- `repeat()`
+- `auto-fill` vs `auto-fit`
+- `minmax()`</p>
+                    <div class="note-toolbar">
+                        <button class="icon-button"><span class="material-icons-outlined">edit</span></button>
+                        <button class="icon-button"><span class="material-icons-outlined">delete</span></button>
+                    </div>
+                </article>
+                
+                <article class="note-card">
+                    <p class="note-content">월: 가슴, 삼두
+화: 등, 이두
+수: 하체
+목: 어깨
+금: 전신 유산소
+주말에는 충분한 휴식 취하기. 단백질 섭취 신경쓰기.</p>
+                    <div class="note-toolbar">
+                        <button class="icon-button"><span class="material-icons-outlined">edit</span></button>
+                        <button class="icon-button"><span class="material-icons-outlined">delete</span></button>
+                    </div>
+                </article>
+                
+                 <article class="note-card">
+                    <p class="note-content">"초보자를 위한 Flexbox 완전 정복 가이드"라는 주제로 글을 써보자. 예제 코드와 그림을 많이 넣어서 이해하기 쉽게 만드는 것이 포인트.</p>
+                    <div class="note-toolbar">
+                        <button class="icon-button"><span class="material-icons-outlined">edit</span></button>
+                        <button class="icon-button"><span class="material-icons-outlined">delete</span></button>
+                    </div>
+                </article>
+            </section>
+        </main>
+    </div>
+</body>
+</html>
+
