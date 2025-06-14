@@ -138,8 +138,8 @@ button:hover .button-text {
 
 .note {
     background-color: #fff;
-    margin: 30px 5px;
-    height: 200px;
+    margin: 15px 5px;
+    height: 100px;
     width: 400px;
     overflow-y: scroll;
     margin-top: 1rem;
@@ -200,4 +200,14 @@ button:hover .button-text {
 
 .hidden {
     display: none;
+}
+
+.note {
+  position: relative;
+}
+.operation {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  z-index: 2;
 }

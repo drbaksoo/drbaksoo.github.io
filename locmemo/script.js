@@ -60,7 +60,7 @@ const addNewNote =  (noteData = { text: '', xx: '0', yy: '0' }) => {
     </div>
 
     <div class="main ${text ? "" : "hidden"} "> </div>
-    <textarea class="${text ? "hidden" : ""} "></textarea> 
+    <textarea class="${text ? "hidden" : ""} " style="height: 40px;"></textarea> 
     <div class="dist"></div>`;
     note.insertAdjacentHTML('afterbegin', htmlData);
 
@@ -157,4 +157,6 @@ async function getgxxgyy_and_load() {
     });
   };
 }
+
+
 
