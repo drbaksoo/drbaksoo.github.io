@@ -1,7 +1,7 @@
 // global var for location
 var gxx = 0, gyy = 0;
 
-const addButton = document.querySelector('#add');
+
 
 // write data into storage
 const updateLSData = () => {
@@ -35,6 +35,13 @@ function getDistanceFromLatLon(lat1, lon1, lat2, lon2) {
   return R * c; // 거리 (미터)
 }
 
+function formatDistance(meters) {
+  if (meters >= 1000) {
+    return (meters / 1000).toFixed(1) + ' km';
+  } else {
+    return meters.toFixed(1) + ' m';
+  }
+}
 
 const addNewNote =  (noteData = { text: '', xx: '0', yy: '0' }) => {
     const { text, xx, yy } = noteData;
@@ -81,8 +88,8 @@ const addNewNote =  (noteData = { text: '', xx: '0', yy: '0' }) => {
     textArea.value = text; // Set the text content
     mainDiv.innerHTML = text;
     var distance = getDistanceFromLatLon(xx,yy,gxx,gyy);
-    distDiv.innerHTML = distance.toFixed(1) + " meters" ;
-
+    //distDiv.innerHTML = distance.toFixed(1) + " meters" ;
+    distDiv.innerHTML = formatDistance(distance) ;
     editButton.addEventListener('click', () => {
         mainDiv.classList.toggle('hidden');
         textArea.classList.toggle('hidden');
@@ -103,12 +110,10 @@ const addNewNote =  (noteData = { text: '', xx: '0', yy: '0' }) => {
 
 }
 
-// get location
+// get location to know current position
 getgxxgyy_and_load();
-console.log("after call getgxxgyy");
 
-
-
+const addButton = document.querySelector('#add');
 addButton.addEventListener('click', () => addNewNote());
 
 /////////// location function ///////////////////////////////////
